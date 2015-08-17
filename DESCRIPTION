@@ -1,10 +1,10 @@
 Package: RFinfer
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Inference for Random Forests
 Version: 0.1
 Date: 2015-08-17
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Cole Brokamp
+Maintainer: <cole.brokamp@gmail.com>
+Description: A set of add on tools for the randomForest package
+License:
 LazyData: TRUE

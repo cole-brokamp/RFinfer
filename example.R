@@ -3,17 +3,13 @@
 # devtools::install_github('cole-brokamp/randomForest')
 
 library(randomForest)
+library(RFinfer)
 
 data(airquality)
 d <- na.omit(airquality)
 set.seed(6655)
 
-rf <- randomForest(Ozone ~ ., data=d,
-                   keep.inbag=T,
-                   # sampsize=nrow(d),
-                   sampsize=floor(nrow(d)^0.7),
-                   # replace=FALSE,
-                   ntree=nrow(d)*50)
+rf <- randomForest(Ozone ~ .,data=d,keep.inbag=T,sampsize=30,replace=FALSE,ntree=10000)
 
 rf.preds <- rfPredVar(rf,pred.data=d,CI=TRUE)
 
