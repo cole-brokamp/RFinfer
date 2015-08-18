@@ -14,7 +14,7 @@ rfPredVar(rf, pred.data = NULL, CI = FALSE)
 \item{CI}{Should 95\% confidence intervals be returned along with predictions and prediction variances?}
 }
 \value{
-A data frame with the predictions and prediction variances (and optionally 95% confidence interval)
+A data frame with the predictions and prediction variances (and optionally 95\% confidence interval)
 }
 \description{
 Generate predictions and prediction variances from a random forest based on the infinitesimal jackknife.

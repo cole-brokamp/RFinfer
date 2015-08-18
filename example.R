@@ -17,20 +17,21 @@ d.preds <- cbind(d,rf.preds)
 
 library(ggplot2)
 
-ggplot(d.preds,aes(Ozone,prediction)) +
+ggplot(d.preds,aes(Ozone,pred)) +
   geom_abline(intercept=0,slope=1,lty=2,color='darkgrey') +
   geom_point() +
   coord_cartesian(ylim=c(-50,200)) +
   geom_errorbar(aes(ymax = u.ci, ymin=l.ci)) +
   theme_bw()
 
-ggplot(d.preds,aes(Temp,prediction)) +
+ggplot(d.preds,aes(Temp,pred)) +
   geom_point() +
   stat_smooth() +
   coord_cartesian(ylim=c(-50,200)) +
   geom_errorbar(aes(ymax = u.ci, ymin=l.ci)) +
   theme_bw()
 
-ggplot(d.preds,aes(prediction,pred.ij.var)) +
+ggplot(d.preds,aes(pred,pred.ij.var)) +
+  geom_smooth() +
   geom_point() +
   theme_bw()
