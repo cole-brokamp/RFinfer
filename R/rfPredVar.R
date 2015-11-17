@@ -4,7 +4,7 @@
 #'
 #' @param rf A random forest trained with \code{keep.inbag=TRUE}. See details for more information.
 #' @param pred.data The data used to \code{predict} with the \code{randomForest}.
-#' @param CI Should 95\% confidence intervals be returned along with predictions and prediction variances?
+#' @param CI Should 95\% confidence intervals based on the CLT be returned along with predictions and prediction variances?
 #' @return A data frame with the predictions and prediction variances (and optionally 95\% confidence interval)
 #' @details
 #' The original version of \code{randomForest} with the \code{keep.inbag=TRUE}
