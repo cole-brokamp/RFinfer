@@ -4,14 +4,21 @@
 \alias{rfPredVar}
 \title{rfPredVar}
 \usage{
-rfPredVar(rf, pred.data = NULL, CI = FALSE)
+rfPredVar(random.forest, rf.data, pred.data = rf.data, CI = FALSE,
+  tree.type = c("rf", "ci"), prog.bar = FALSE)
 }
 \arguments{
-\item{rf}{A random forest trained with \code{keep.inbag=TRUE}. See details for more information.}
+\item{rf.data}{The data used to train \code{rf}}
 
-\item{pred.data}{The data used to \code{predict} with the \code{randomForest}.}
+\item{pred.data}{The data used to predict with the forest; defaults to \code{rf.data} if not given}
 
 \item{CI}{Should 95\% confidence intervals based on the CLT be returned along with predictions and prediction variances?}
+
+\item{tree.type}{either 'ci' for conditional inference tree or 'rf' for traditional CART tree}
+
+\item{prog.bar}{should progress bar be shown? (only applicable when \code{tree.type='ci'}}
+
+\item{rf}{A random forest trained with \code{keep.inbag=TRUE}. See details for more information.}
 }
 \value{
 A data frame with the predictions and prediction variances (and optionally 95\% confidence interval)
@@ -25,12 +32,19 @@ only keeps track if each training data point was or was not included in each res
 Install a tweaked version of \code{randomForest} that amends this to include the number of times each
 training data point was included in each resample by running the following code in R:
 \code{devtools::install_github('cole-brokamp/randomForest')}
+
+Note: This function does not use the default predict method for forests produced by \code{cforest}.
+The predictions here are the direct averages of all tree predictions, instead of using
+the observation weights.  Therefore, predictions from this function will likely differ from
+\code{predict.cforest} when using subsampling.
+
+This function currently only works with regression forests -- not classification forests.
 }
 \examples{
 library(randomForest)
 data(airquality)
 d <- na.omit(airquality)
 rf <- randomForest(Ozone ~ .,data=d,keep.inbag=T,sampsize=30,replace=FALSE,ntree=500)
-rfPredVar(rf,pred.data=d,CI=TRUE)
+rfPredVar(rf,rf.data=d,CI=TRUE,tree.type='rf')
 }
 
