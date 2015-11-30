@@ -10,9 +10,9 @@ CB_cforest <- function(rf,rf.d,p.d=rf.d,pb=FALSE) {
   tc <- party::ctree_control(teststat='max',testtype='Univariate',mincriterion=0,mtry=rf$mtry)
   pb.fun <- ifelse(pb,pbapply::pblapply,lapply)
   out <- list()
-  print('making ci trees')
+  if (pb) print('making ci trees')
   out$c_trees <- pb.fun(new.samples,function(x) party::ctree(as.formula(rf$call$formula),data=x,controls=tc))
-  print('predicting new data for each tree')
+  if (pb) print('predicting new data for each tree')
   out$preds <- do.call(cbind,pb.fun(1:length(out$c_trees),function(x) predict(out$c_trees[[x]],newdata=p.d)))
   return(out)
   }
