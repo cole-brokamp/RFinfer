@@ -6,5 +6,11 @@ Date: 2015-08-17
 Author: Cole Brokamp
 Maintainer: <cole.brokamp@gmail.com>
 Description: A set of add on tools for the randomForest package
-License:
+Depends: R (>= 3.1.2)
+Imports:
+    Matrix
+    party,
+    pbapply,
+    randomForest
+License: GPL
 LazyData: TRUE
