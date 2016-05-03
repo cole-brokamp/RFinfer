@@ -1,3 +1,7 @@
+# RFinfer
+
+[![DOI](https://zenodo.org/badge/21831/cole-brokamp/RFinfer.svg)](https://zenodo.org/badge/latestdoi/21831/cole-brokamp/RFinfer)
+
 R package for generating prediction and prediction variances from random forests. 
 
 options include:
