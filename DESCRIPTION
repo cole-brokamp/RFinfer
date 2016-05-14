@@ -15,3 +15,4 @@ Imports:
     pbapply
 License: GPL
 LazyData: TRUE
+RoxygenNote: 5.0.1

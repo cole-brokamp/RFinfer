@@ -1,27 +1,33 @@
 #' @title rfPredVar
-#' @description
-#' Generate predictions and prediction variances from a random forest based on the infinitesimal jackknife.
+#' @description Generate predictions and prediction variances from a random
+#' forest based on the infinitesimal jackknife.
 #'
-#' @param rf A random forest trained with \code{keep.inbag=TRUE}. See details for more information.
+#' @param random.forest A random forest trained with \code{keep.inbag=TRUE}. See
+#'   details for more information.
 #' @param rf.data The data used to train \code{rf}
-#' @param pred.data The data used to predict with the forest; defaults to \code{rf.data} if not given
-#' @param tree.type either 'ci' for conditional inference tree or 'rf' for traditional CART tree
-#' @param prog.bar should progress bar be shown? (only applicable when \code{tree.type='ci'}
-#' @param CI Should 95\% confidence intervals based on the CLT be returned along with predictions and prediction variances?
-#' @return A data frame with the predictions and prediction variances (and optionally 95\% confidence interval)
-#' @details
-#' The original version of \code{randomForest} with the \code{keep.inbag=TRUE}
-#' only keeps track if each training data point was or was not included in each resample.
-#' Install a tweaked version of \code{randomForest} that amends this to include the number of times each
-#' training data point was included in each resample by running the following code in R:
-#' \code{devtools::install_github('cole-brokamp/randomForest')}
+#' @param pred.data The data used to predict with the forest; defaults to
+#'   \code{rf.data} if not given
+#' @param tree.type either 'ci' for conditional inference tree or 'rf' for
+#'   traditional CART tree
+#' @param prog.bar should progress bar be shown? (only applicable when
+#'   \code{tree.type='ci'}
+#' @param CI Should 95\% confidence intervals based on the CLT be returned along
+#'   with predictions and prediction variances?
+#' @return A data frame with the predictions and prediction variances (and
+#'   optionally 95\% confidence interval)
 #'
-#' Note: This function does not use the default predict method for forests produced by \code{cforest}.
-#' The predictions here are the direct averages of all tree predictions, instead of using
-#' the observation weights.  Therefore, predictions from this function will likely differ from
-#' \code{predict.cforest} when using subsampling.
+#' @details The random forest trained with \code{keep.inbag=TRUE} is supplied
+#' only for the purpose of defining the resampling scheme. The function builds a
+#' new random forest based on the \code{tree.type} setting.
 #'
-#' This function currently only works with regression forests -- not classification forests.
+#' Note: This function does not use the default predict method for forests produced by
+#' \code{cforest}. The predictions here are the direct averages of all tree
+#' predictions, instead of using the observation weights.  Therefore,
+#' predictions from this function will likely differ from \code{predict.cforest}
+#' when using subsampling.
+#'
+#' This function currently only works with regression forests -- not
+#' classification forests.
 #'
 #' @examples
 #' library(randomForest)
@@ -36,12 +42,11 @@
 rfPredVar <- function(random.forest,rf.data,pred.data=rf.data,CI=FALSE,tree.type=c('rf','ci'),prog.bar=FALSE) {
 
   if (is.null(random.forest$inbag)) {
-    stop("Random forest must be trained with keep.inbag = TRUE
-           \nSee Details in function documentation")
+    stop("Random forest must be trained with keep.inbag = TRUE")
   }
   if (length(unique(colSums(random.forest$inbag))) > 1) {
     stop("The keep.inbag field must store the number of times each observation was used
-           \nSee Details in function documentation")
+           \nMake sure the latest version of the randomForest package is installed from CRAN")
   }
   N.weights <- random.forest$inbag
 
