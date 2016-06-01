@@ -7,7 +7,9 @@
 
 CB_cforest <- function(rf,rf.d,p.d=rf.d,pb=FALSE) {
   new.samples <- match_sample(rf,rf.d)
-  tc <- party::ctree_control(teststat='max',testtype='Univariate',mincriterion=0,mtry=rf$mtry)
+  # tc <- party::ctree_control(teststat='max',testtype='Univariate',mincriterion=0,mtry=rf$mtry)
+  tc <- party::ctree_control(teststat='max',testtype='Univariate',
+                             mincriterion=0,mtry=rf$mtry,minbucket=1,minsplit=2)
   pb.fun <- ifelse(pb,pbapply::pblapply,lapply)
   out <- list()
   if (pb) print('making ci trees')
