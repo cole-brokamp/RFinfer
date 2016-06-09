@@ -1,0 +1,167 @@
+---
+title: "Infinitesimal Jackknife"
+author: "Cole Brokamp"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  \VignetteIndexEntry{Infinitesimal Jackknife}
+  \VignetteEngine{knitr::rmarkdown}
+  \VignetteEncoding{UTF-8}
+---
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { 
+      equationNumbers: { 
+            autoNumber: "AMS",
+            formatNumber: function (n) {return ''+n}
+      } 
+  }
+});
+</script>
+
+Bootstrap sampling, subsampling, and the jackknife all rely on estimating the variance of a statistic by using the variability between resamples rather than using statistical distributions. This vignette will cover the jackknife and how it is applied to the resampling distribution to generate variance estimates for random forest predictions.
+
+## Ordinary Jackknife
+
+The ordinary jackknife is a resampling method useful for estimating the variance or bias of a statistic.  The jackknife estimate of a statistic can be found be by repeatedly calculating the statistic, each time leaving one observation from the sample out and averaging all estimates.  The variance of the estimate can be found by calculating the variance of the jackknifed estimates:
+
+\begin{equation}
+\hat{V}_{J} = \frac{n-1}{n}\sum\limits_{i=1}^{n} \left(\hat{\theta}_{(-i)} - \hat{\theta}_{(\cdot)}\right)^2
+\end{equation}
+
+where $n$ is the total sample size, $\hat{\theta}_{(-i)}$ is the statistic estimated without using the $i^{th}$ observation, and $\hat{\theta}_{(\cdot)}$ is the average of all jackknife estimates.
+
+## Jackknife After Bootstrap
+
+The ordinary jackknife is extended for use with bagging by applying it to the bootstrap distribution (Efron2014).  Instead of leaving out one observation at a time, the existing bootstrap samples are used and the statistic is calculated based on all resamples which do not use the $i^{th}$ observation:
+
+
+\begin{equation}
+\hat{V}_{JB} = \frac{n-1}{n}\sum\limits_{i=1}^{n} \left(\bar{t^*}_{(-i)}(x) - \bar{t^*}_{(\cdot)}(x)\right)^2
+\end{equation}
+
+where $\bar{t^*}_{(-i)}(x)$ is the average of $t^*(x)$ over all bootstrap samples not containing the $i^{th}$ example and $\bar{t^*}_{(\cdot)}(x)$ is the mean of all $\bar{t^*}_{(i)}(x)$.
+
+
+## Infinitesimal Jackknife and Resampling
+
+As opposed to $\hat{V}_{J}$ and $\hat{V}_{JB}$, where the behavior of a statistic is studied after removing one or more observations at a time, the infinitesimal jackknife (IJ) looks at the behavior of a statistic after down-weighting each observation by an infinitesimal amount (Jaeckel1972). Adapted from Efron (2014), the following is a gentle introduction to the idea.
+
+Define
+
+\begin{equation}
+t_i^*=t(\mathbf{y}_i^*)~~~~~~~~~~~~\mathbf{y}_i^*=(y_{i1}^*,y_{i2}^*,...,y_{ik}^*,...,y_{in}^*)
+\end{equation} 
+
+as the $i^{th}$ calculation of a statistic based on the $i^{th}$ bootstrap sample, and
+
+\begin{equation}
+Y^*_{ij}=\#\{y^*_{ik}=y_j\}
+\end{equation}
+
+as the number of times that the original data point $y_j$ appears in the $i^{th}$ bootstrap sample $\mathbf{y}^*_i$.  Then, the count vector $\mathbf{Y}_i^*=(Y_{i1}^*,Y_{i2}^*,...,Y_{ik}^*,...,Y_{in}^*)$ forms a multinomial distribution with $n$ draws on $n$ categories, each having a probability of $1/n$.  Using the mean and variance of the multinomial distribution, we can say that 
+
+\begin{equation}
+\mathbf{Y}^*_i \sim (\mathbf{1}_n,\mathbf{I}-\mathbf{1}_n\mathbf{1}_n^T/n).
+\end{equation}
+
+By fixing the original data and writing the bootstrap replication statistic as function of the count vector, we can define the ideal smoothed bootstrap estimate $S_0$ as the multinomial expectation of $T(\mathbf{Y}^*)$. 
+
+\begin{equation}\label{eq:S_0}
+S_0=E[T(\mathbf{Y}^*)],~~~\mathbf{Y}^* \sim \text{Mult}_n(n,\mathbf{p}_0),
+\end{equation}
+
+with $\mathbf{p}_0=(1/n,1/n,...,1/n)$. Extending this to a probability vector of $\mathbf{p}=(p_1,p_2,...,p_n)$ leads to
+
+\begin{equation}\label{eq:S(p)}
+S(\mathbf{p})=E[T(\mathbf{Y}^*)],~~~\mathbf{Y}^* \sim \text{Mult}_n(n,\mathbf{p}),
+\end{equation}
+
+Using the delta method, we can define the directional derivative as
+
+\begin{equation}\label{eq:S_j}
+\dot{S}_j=\lim\limits_{\epsilon\rightarrow0}\frac{S(\mathbf{p}_0+\epsilon(\pmb{\delta}_j - \mathbf{p}_0))-S(\mathbf{p}_0)}{\epsilon}
+\end{equation}
+
+where $\pmb{\delta}_j$ is the $j^{th}$ coordinate vector with all zeros except for a one in the $j^{th}$ place. We can then use the delta method to estimate the standard deviation of $s_0$
+
+\begin{equation}
+\frac{\left(\sum_{j=1}^{n}\dot{S}_j^2\right)^{1/2}}{n}
+\end{equation}
+
+In order to reduce this back into terms of $\mathbf{Y}^*$, we define $w_i(\mathbf{p})$ as the probabilities of $\mathbf{Y}^*$ in Equation 7 divided by the probabilities of $\mathbf{Y}^*$ in Equation 6,
+
+\begin{equation}
+w_i(\mathbf{p})=\prod_{k=1}^{n}(np_k)^{Y^*_{ik}},
+\end{equation}
+
+such that
+
+\begin{equation}\label{eq:weights}
+S(\mathbf{p})=\sum_{i=1}^{B}w_i(\mathbf{p})t_i^*/B
+\end{equation}
+
+For $\mathbf{p}(\epsilon)=\mathbf{p}_0+\epsilon(\mathbf{\delta}_j-\mathbf{p}_0)$ as in Equation 8,
+
+\begin{equation}
+w_i(\mathbf{p})=(1+(n-1)\epsilon)^{Y^*_{ij}}(1-\epsilon)^{\sum_{k\neq j}Y^*_{ik}}
+\end{equation}
+
+Letting $\epsilon \rightarrow 0$ results in 
+
+\begin{equation}
+w_i(\mathbf{p})\doteq 1 + n\epsilon (Y^*_{ij}-1)
+\end{equation}
+
+Substituting this back into Equation 11 gives
+
+\begin{equation}
+S(\mathbf{p}(\epsilon)) \doteq \sum_{i=1}^{B}[1+n\epsilon(Y^*_{ij}-1)]t^*_i/B = s_0 + n \epsilon~\text{cov}_j
+\end{equation}
+
+Using Equation 8 defines $\dot{S}_j=n~\text{cov}_j$.
+Thus, the IJ estimated variance of a bagged predictor is 
+
+\begin{equation}
+\hat{V}_{IJ}=\sum_{j=1}^{n}\text{cov}_j
+\end{equation}
+
+or the covariance between the predictions and the number of times each sample was used in the resamples.
+
+## Random Forest Prediction Variance
+
+Wager et al. (2014a) have recently extended this idea by applying the IJ to random forest predictions.  Based on using subsamples rather than bootstrap samples, they have shown that the variance of random forest predictions can be consistently estimated.  Here the IJ variance estimator is applied to the resampling distribution for a new prediction point:
+
+\begin{equation}
+\label{eq:IJ}
+\hat{V}_{IJ} = \sum\limits_{i=1}^{n} Cov_*\left[T(x; Z^*_1,...,Z^*_n),N^*_i\right]
+\end{equation}
+
+where $T(x; Z^*_1,...,Z^*_n)$ is the prediction of the tree $T$ for the test point $x$ based on the subsample $Z^*_1,...,Z^*_n$ and $N^*_i$ is the number of times $Z_i$ appears in the subsample. Furthermore, random forest predictions are asymptotically normal given that the underlying trees are based on subsampling and that the subsample size $s$ scales as $s(n)/n=o(log(n)^{-p})$, where $n$ the is number of training examples and $p$ is the number of features (Wager2014b).  
+
+Because $\hat{V}_{IJ}$ is calculated in practice with a finite number of trees $B$, it is inherently associated with Monte Carlo error. Although this error can be decreased by using a large $B$, a correction has been suggested (Wager2014a):
+
+\begin{equation}
+\label{eq:IJB}
+\hat{V}_{IJ}^B = \sum\limits_{i=1}^{n}C_i^2 - \frac{s(n-s)}{n}\frac{\hat{v}}{B}
+\end{equation}
+
+where $C_i = \frac{1}{B}\sum\limits_{b=1}^{B}(N^*_{bi} - s/n)(T^*_b - \bar{T}^*)$ and $\hat{v} = \frac{1}{B}\sum\limits_{b=1}^{B}(T^*_b - \bar{T}^*)^2$. 
+
+This is essentially a Monte Carlo estimate of Equation \ref{eq:IJ} with a bias correction subtracted off. These estimates are asymptotically normal given a few key conditions, one of which is that the underlying trees are honest (Wager2014b). Simulation experiments using sub bagged random forests have shown that these variance estimates are biased (Wager 2014b) and this is likely due to the fact that the underlying trees are not honest. Recently, we have shown that using conditional inference trees (an honest tree type) increases the accuracy of IJ estimator for random forest prediction variance (Brokamp2016).
+
+## References
+
+Efron B. Estimation and accuracy after model selection. Journal of the American Statistical Association. 2014 Jul 3;109(507):991-1007.
+
+Jaeckel LA. The infinitesimal jackknife. 1972.
+
+Wager S, Hastie T, Efron B. Confidence intervals for random forests: The jackknife and the infinitesimal jackknife. The Journal of Machine Learning Research. 2014 Jan 1;15(1):1625-51.
+
+Wager S. Asymptotic theory for random forests. arXiv preprint arXiv:1405.0352. 2014 May 2.
+
+Brokamp C, Rao MB, Ryan P, Jandarov J. A comparison of resampling and recursive partitioning methods in random forest for estimating the asymptotic variance using the infinitesimal jackknife. Submitted.
+
+
+

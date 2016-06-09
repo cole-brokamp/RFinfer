@@ -10,7 +10,7 @@ vignette: >
 ---
 
 ```{r echo=FALSE,warning=FALSE}
-knitr::opts_chunk$set(prompt=FALSE,cache=TRUE,warning=FALSE,message=FALSE,collapse=TRUE)
+knitr::opts_chunk$set(prompt=TRUE,warning=FALSE,message=FALSE,collapse=TRUE)
 suppressPackageStartupMessages(library(RFinfer))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(nhanesA))
@@ -216,9 +216,6 @@ class(newdat$age) <- c('labelled','integer')
 class(newdat$poverty_income_ratio) <- c('labelled','numeric')
 newdat.preds <- rfPredVar(rf,rf.data=d,pred.data=newdat,
                           CI=TRUE,tree.type='ci',prog.bar=FALSE)
-```
-
-```{r}
 newdat.preds.plot <- cbind(newdat,newdat.preds)
 ```
 
