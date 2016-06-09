@@ -2,3 +2,4 @@
 .Rhistory
 .RData
 rfPredVar_example.*
+vignettes/rfPredVar_example_cache/
