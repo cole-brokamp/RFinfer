@@ -3,6 +3,7 @@
 #'   forest based on the infinitesimal jackknife.
 #'
 #'@export
+#'@import randomForest
 #'
 #' @param random.forest A random forest trained with \code{keep.inbag=TRUE}. See
 #'   details for more information.
