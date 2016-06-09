@@ -8,7 +8,7 @@ Maintainer: <cole.brokamp@gmail.com>
 Description: A set of add on tools for the randomForest package
 Depends:
     R (>= 3.1.2),
-    randomForest
+    randomForest (>= 4.6-12)
 Imports:
     Matrix,
     party,
