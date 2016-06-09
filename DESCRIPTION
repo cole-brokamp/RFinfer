@@ -16,3 +16,8 @@ Imports:
 License: GPL
 LazyData: TRUE
 RoxygenNote: 5.0.1
+Suggests: knitr,
+    rmarkdown,
+    ggplot2,
+    nhanesA
+VignetteBuilder: knitr
