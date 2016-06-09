@@ -10,34 +10,17 @@ vignette: >
 ---
 
 ```{r echo=FALSE,warning=FALSE}
-knitr::opts_chunk$set(prompt=FALSE,comment=NA,cache=FALSE,warning=FALSE,message=FALSE,collapse=TRUE)
+knitr::opts_chunk$set(prompt=FALSE,cache=TRUE,warning=FALSE,message=FALSE,collapse=TRUE)
 suppressPackageStartupMessages(library(RFinfer))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(nhanesA))
 ```
 
-# Introduction
-
-Open this vignette from within R with the command `vignette('Introduction to RFinfer')`.
-
 ## Overview
 
-This vignette is an introductory overview of the `RFinfer` package for generating prediction variances from random forest predictions. The first section covers some of the theory behind the infinitesimal jackknife, how it is applied to a random forest to estimate the prediction variance, and its accuracy as studied using simulation experiments. The next section covers how to install the package in `R`. Next, we cover a simple example showing how to implement the main function, `rfPredVar()` to generate prediction with accompanying variance estimates.  Finally, we cover a more in depth example using NHANES data, comparing the different types of random forests and using plots to carry out some statistical inference.  These inferences are compared to a standard linear model.  Lastly, we summarize the functionality of the package, list future development directions, and discuss statistical learning situations that might benefit the most from this package.
+This vignette is an introductory overview of the `RFinfer` package for generating prediction variances from random forest predictions.The first section covers how to install the package in `R`. Next, we cover a simple example showing how to implement the main function, `rfPredVar()` to generate prediction with accompanying variance estimates.  Finally, we cover a more in depth example using NHANES data, comparing the different types of random forests and using plots to carry out some statistical inference.  These inferences are compared to a standard linear model. 
 
-## Infinitesimal Jackknife
-
-Need refs here!!!
-
-### Background
-
-This package is an implementation of the infinitesimal jackknife (IJ).
-
-### Accuracy of IJ estimator
-
-Cite my paper and the Wager arXiv paper too.
-
-
-# Using the Package
+For an detailed introduction to the infinitesimal jackknife and how it is applied to the random forest to generate prediction variances, see the other vignette titled `Infinitesimal Jacknife`.
 
 ## Installation
 
@@ -51,7 +34,7 @@ Formerly, the package required a custom version of the `randomForest` package th
 
 ## Random Forest Prediction Variance Function
 
-At the heart of the package is the `rfPredVar` function which trains a random forest using either conditonal inference trees or traditional CART trees and produces prediction estimates with accompanying estimates of the prediction variance.  The function takes a random forest trained with the `keep.inbag=TRUE` in order to detect the resampling scheme (either bootstrap or subsample).  This way the user can supply the same random forest to `rfPredVar` and the same resamples will be used when training the forest using either type of trees, facilitating a true comparison. The function defaults to making predictions using the original prediction data, which is useful for making inferences about the model, but can also be supplied with new data to predict on. The function returns a data.frame with the predictions and prediction variances. If requested in the call with `CI=TRUE`, the 95% confidence intervals will also be returned. Finally, since the training of forests using conditional inference trees can be computationally intensive, a progress bar can be requested using `prog.bar=TRUE`. See `?rfPredVar` for more details.
+At the heart of the package is the `rfPredVar` function which trains a random forest using either conditonal inference trees or traditional CART trees and produces prediction estimates with accompanying estimates of the prediction variance.  The function takes a random forest trained with the `keep.inbag=TRUE` in order to detect the resampling scheme (either bootstrap or subsample).  This way the user can supply the same random forest to `rfPredVar` and the same resamples will be used when training the forest using either type of trees, facilitating a true comparison. The function defaults to making predictions using the original prediction data, which is useful for making inferences about the model, but can also be supplied with new data to predict on. The function returns a data.frame with the predictions and prediction variances. If requested in the call with `CI=TRUE`, the 95% confidence intervals will also be returned. Finally, since the training of forests using conditional inference trees can be computationally intensive, a progress bar can be requested using `prog.bar=TRUE`. See `?rfPredVar` for more details, including examples on how to specify forests built with subsampling instead of bootstrap sampling or utilizing conditional inference trees instead of traditional CART trees.
 
 ## Simple Example
 
@@ -79,7 +62,7 @@ str(rf.preds)
 
 Plot the predictions with their 95% confidence intervals according to the actual values.
 
-```{r, fig.width=5,fig.height=3}
+```{r, fig.width=4,fig.height=2}
 library(ggplot2)
 ggplot(rf.preds,aes(d.aq$Ozone,pred)) +
   geom_abline(intercept=0,slope=1,lty=2,color='#999999') +
@@ -91,13 +74,12 @@ ggplot(rf.preds,aes(d.aq$Ozone,pred)) +
 
 Here, we can see that the random forest is generally less confident about its more inaccuracte predictions.  This can also be visualized by plotting the prediction variance as a function of the prediction error.
 
-
-```{r fig.width=5,fig.height=3}
+```{r fig.width=4,fig.height=2}
 qplot(d.aq$Ozone - rf.preds$pred,rf.preds$pred.ij.var,
      xlab='prediction error',ylab='prediction variance') + theme_bw()
 ```
 
-## Using Prediction Variance for Inference
+## Using Prediction Variance for Inference Example
 
 Here we will explore a more in depth example using real data from NHANES showing how the random forest prediction variance might be used for statistical inference. We will compare the inferences to those from a linear model.
 
@@ -173,7 +155,7 @@ preds$age <- rep(d$age,3)
 
 To compare the three model predictions, we can plot the predicted BMI according to the measured BMI for each model type, including the prediction confidence intervals.
 
-```{r, fig.height=4,fig.width=10}
+```{r, fig.height=3,fig.width=7}
 ggplot(preds,aes(measured,pred,color=tree)) +
   geom_point(size=0.5) +
   geom_abline(intercept=0,slope=1,lty=2,color='#999999') +
@@ -192,7 +174,7 @@ tapply(preds$deviance,preds$tree,function(x) sqrt(sum(x^2)/length(x)))
 
 As we expected, the random forest models have a better performance than the linear model.  There doesn't seem to be a large difference in using CART or CI trees within the random forest.  It is encouraging to see that the random forest is less confident about its less accurate predictions.  To visualize this, we can plot the length of the confidence intervals according to the prediction deviance. The same pattern does not hold with the linear model, with some of the highest uncertaintity being associated with the linear model's most accurate predictions.
 
-```{r fig.height=4,fig.width=10}
+```{r fig.height=3,fig.width=7}
 ggplot(preds,aes(deviance,CI_length,color=tree)) +
   geom_point() +
   theme_bw() +
@@ -211,7 +193,7 @@ We can see that age is indeed a significant predictor of BMI, with an estimated 
 
 Since we do not have model coefficients for the random forest models, we can instead use the predictions to interpret the effect of age on BMI.
 
-```{r fig.height=4,fig.width=10}
+```{r fig.height=3,fig.width=7}
 ggplot(preds,aes(age,pred,color=tree)) +
   geom_point(size=0.5) +
   geom_smooth() +
@@ -242,7 +224,7 @@ newdat.preds.plot <- cbind(newdat,newdat.preds)
 
 Now, we can plot the predictions for different values of age according to fixed values of race, education, and income poverty ratio. A locally smoothed polynomial regression fit is overlaid for interpretation purposes. Although this prediction occurs at fixed values of the other covariates, it is still more insightful that a regression coefficient that assumes a linear relationship. Furthermore, we did not have to explore higher order terms or interactions and make multiple model comparisons that would be required to uncover this relationship using a linear model.
 
-```{r message=FALSE,warning=FALSE,fig.height=4,fig.width=6}
+```{r message=FALSE,warning=FALSE,fig.height=3,fig.width=7}
 ggplot(newdat.preds.plot,aes(age,pred)) +
   geom_point(size=0.5) +
   geom_smooth() +
@@ -250,15 +232,3 @@ ggplot(newdat.preds.plot,aes(age,pred)) +
   xlab('Age') + ylab('Predicted BMI') +
   theme_bw()
 ```
-
-
-
-# Future Work
-
-- Currently, the function only works with regression forests, but in the future we plan to extend the implementation to classification and survival forests.
-- Support for parallel computation and progress bars via CB::cb_apply
-
-
-
-
-
