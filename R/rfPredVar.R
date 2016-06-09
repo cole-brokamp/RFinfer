@@ -2,6 +2,8 @@
 #' @description Generate predictions and prediction variances from a random
 #'   forest based on the infinitesimal jackknife.
 #'
+#'@export
+#'
 #' @param random.forest A random forest trained with \code{keep.inbag=TRUE}. See
 #'   details for more information.
 #' @param rf.data The data used to train \code{rf}
