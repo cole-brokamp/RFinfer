@@ -5,7 +5,7 @@
 \title{rfPredVar}
 \usage{
 rfPredVar(random.forest, rf.data, pred.data = rf.data, CI = FALSE,
-  tree.type = c("rf", "ci"), prog.bar = FALSE)
+  tree.type = "rf", prog.bar = FALSE)
 }
 \arguments{
 \item{random.forest}{A random forest trained with \code{keep.inbag=TRUE}. See
@@ -23,7 +23,7 @@ with predictions and prediction variances?}
 traditional CART tree}
 
 \item{prog.bar}{should progress bar be shown? (only applicable when
-\code{tree.type='ci'}}
+\code{tree.type='ci'})}
 }
 \value{
 A data frame with the predictions and prediction variances (and
@@ -31,27 +31,42 @@ A data frame with the predictions and prediction variances (and
 }
 \description{
 Generate predictions and prediction variances from a random
-forest based on the infinitesimal jackknife.
+  forest based on the infinitesimal jackknife.
 }
 \details{
 The random forest trained with \code{keep.inbag=TRUE} is supplied
-only for the purpose of defining the resampling scheme. The function builds a
-new random forest based on the \code{tree.type} setting.
+  only for the purpose of defining the resampling scheme. The function builds
+  a new random forest based on the \code{tree.type} setting.  However, the
+  resamples are maintained identically to the supplied random forest.  This
+  allows for direct comparison of the tree methods without having to account
+  for variation in resampling.
 
-Note: This function does not use the default predict method for forests produced by
-\code{cforest}. The predictions here are the direct averages of all tree
-predictions, instead of using the observation weights.  Therefore,
-predictions from this function will likely differ from \code{predict.cforest}
-when using subsampling.
+  Currently, the CI methods are much more computationally intensive because
+  there is no C implementation of the CI random forest method that indicates
+  the number of times that each sample is included in each resample.  In
+  order to carry out our simulations using \eqn{\hat{V}_{IJ}^B}{V_IJ^B}, we had to use a
+  pure R implementation of CI random forests.  This is different for CART
+  random forests, where a C implementation already exists in the
+  \code{randomForest} package.  However, it should be noted that the
+  difference in computational times is due to the random forest creation
+  step, not the implementation of \eqn{\hat{V}_{IJ}^B}{V_IJ^B}.  This should not be an
+  issue in the future when a C implementation of CI random forests is
+  created.
 
-This function currently only works with regression forests -- not
-classification forests.
+  Note: This function does not use the default predict method for forests
+  produced by \code{cforest}. The predictions here are the direct averages of
+  all tree predictions, instead of using the observation weights.  Therefore,
+  predictions from this function will likely differ from
+  \code{predict.cforest} when using subsampling.
+
+  This function currently only works with regression forests -- not
+  classification forests.
 }
 \examples{
 library(randomForest)
 data(airquality)
 d <- na.omit(airquality)
-rf <- randomForest(Ozone ~ .,data=d,keep.inbag=T,sampsize=30,replace=FALSE,ntree=500)
+rf <- randomForest(Ozone ~ .,data=d,keep.inbag=TRUE,sampsize=30,replace=FALSE,ntree=500)
 rfPredVar(rf,rf.data=d,CI=TRUE,tree.type='rf')
 }
 
