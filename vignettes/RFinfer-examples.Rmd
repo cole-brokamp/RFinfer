@@ -4,9 +4,9 @@ author: "Cole Brokamp"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  \VignetteIndexEntry{Introduction to RFinfer}
-  \VignetteEngine{knitr::rmarkdown}
-  \VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Introduction to RFinfer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r echo=FALSE,warning=FALSE}
@@ -34,11 +34,11 @@ Formerly, the package required a custom version of the `randomForest` package th
 
 ## Random Forest Prediction Variance Function
 
-At the heart of the package is the `rfPredVar` function which trains a random forest using either conditonal inference trees or traditional CART trees and produces prediction estimates with accompanying estimates of the prediction variance.  The function takes a random forest trained with the `keep.inbag=TRUE` in order to detect the resampling scheme (either bootstrap or subsample).  This way the user can supply the same random forest to `rfPredVar` and the same resamples will be used when training the forest using either type of trees, facilitating a true comparison. The function defaults to making predictions using the original prediction data, which is useful for making inferences about the model, but can also be supplied with new data to predict on. The function returns a data.frame with the predictions and prediction variances. If requested in the call with `CI=TRUE`, the 95% confidence intervals will also be returned. Finally, since the training of forests using conditional inference trees can be computationally intensive, a progress bar can be requested using `prog.bar=TRUE`. See `?rfPredVar` for more details, including examples on how to specify forests built with subsampling instead of bootstrap sampling or utilizing conditional inference trees instead of traditional CART trees.
+At the heart of the package is the `rfPredVar` function which trains a random forest using either conditional inference trees or traditional CART trees and produces prediction estimates with accompanying estimates of the prediction variance.  The function takes a random forest trained with the `keep.inbag=TRUE` in order to detect the resampling scheme (either bootstrap or subsample).  This way the user can supply the same random forest to `rfPredVar` and the same resamples will be used when training the forest using either type of trees, facilitating a true comparison. The function defaults to making predictions using the original prediction data, which is useful for making inferences about the model, but can also be supplied with new data to predict on. The function returns a data.frame with the predictions and prediction variances. If requested in the call with `CI=TRUE`, the 95% confidence intervals will also be returned. Finally, since the training of forests using conditional inference trees can be computationally intensive, a progress bar can be requested using `prog.bar=TRUE`. See `?rfPredVar` for more details, including examples on how to specify forests built with subsampling instead of bootstrap sampling or utilizing conditional inference trees instead of traditional CART trees.
 
 ## Simple Example
 
-First load the package and some example data included with R.  The New York Air Quality Measurements is a dataset of daily ozone concentrations in New York from May to September of 1973 and includes meterologic covariates (see `?airquality` for more details).  Because calls to random forest do not allow missing data, we will only use complete cases here for the sake of example. We'll also kick out two very high outliers.
+First load the package and some example data included with R.  The New York Air Quality Measurements is a dataset of daily ozone concentrations in New York from May to September of 1973 and includes meteorologic covariates (see `?airquality` for more details).  Because calls to random forest do not allow missing data, we will only use complete cases here for the sake of example. We'll also kick out two very high outliers.
 
 ```{r}
 library(RFinfer)
@@ -72,7 +72,7 @@ ggplot(rf.preds,aes(d.aq$Ozone,pred)) +
   theme_bw()
 ```
 
-Here, we can see that the random forest is generally less confident about its more inaccuracte predictions.  This can also be visualized by plotting the prediction variance as a function of the prediction error.
+Here, we can see that the random forest is generally less confident about its more inaccurate predictions.  This can also be visualized by plotting the prediction variance as a function of the prediction error.
 
 ```{r fig.width=4,fig.height=2}
 qplot(d.aq$Ozone - rf.preds$pred,rf.preds$pred.ij.var,
@@ -85,7 +85,7 @@ Here we will explore a more in depth example using real data from NHANES showing
 
 ### Get NHANES Data
 
-We will use the `nhanesA` package to retreive information on BMI and some possibly related demographic characteristics.
+We will use the `nhanesA` package to retrieve information on BMI and some possibly related demographic characteristics.
 
 ```{r}
 library(nhanesA)
@@ -172,7 +172,7 @@ To compare the model performances, calculate the root mean squared error.
 tapply(preds$deviance,preds$tree,function(x) sqrt(sum(x^2)/length(x)))
 ```
 
-As we expected, the random forest models have a better performance than the linear model.  There doesn't seem to be a large difference in using CART or CI trees within the random forest.  It is encouraging to see that the random forest is less confident about its less accurate predictions.  To visualize this, we can plot the length of the confidence intervals according to the prediction deviance. The same pattern does not hold with the linear model, with some of the highest uncertaintity being associated with the linear model's most accurate predictions.
+As we expected, the random forest models have a better performance than the linear model.  There doesn't seem to be a large difference in using CART or CI trees within the random forest.  It is encouraging to see that the random forest is less confident about its less accurate predictions.  To visualize this, we can plot the length of the confidence intervals according to the prediction deviance. The same pattern does not hold with the linear model, with some of the highest uncertainty being associated with the linear model's most accurate predictions.
 
 ```{r fig.height=3,fig.width=7}
 ggplot(preds,aes(deviance,CI_length,color=tree)) +

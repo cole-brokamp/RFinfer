@@ -4,9 +4,9 @@ author: "Cole Brokamp"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  \VignetteIndexEntry{Infinitesimal Jackknife}
-  \VignetteEngine{knitr::rmarkdown}
-  \VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Infinitesimal Jackknife}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 <script type="text/x-mathjax-config">
