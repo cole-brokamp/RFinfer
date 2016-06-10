@@ -1,3 +1,11 @@
+## Resumbmission notes
+
+- added name to maintainer field
+- single quoted randomForest package name in DESCRIPTION
+- tested on local OS X install with R 3.3.0
+- added prebuilt vignette index
+- resolved undefined global functions by adding importFrom to NAMESPACE file
+
 ## Test environments
 * local OS X install, R 3.2.4
 * ubuntu 12.04 (on travis-ci), R 3.2.4
