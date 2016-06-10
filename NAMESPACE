@@ -2,3 +2,6 @@
 
 export(rfPredVar)
 import(randomForest)
+importFrom(stats,as.formula)
+importFrom(stats,predict)
+importFrom(stats,qnorm)

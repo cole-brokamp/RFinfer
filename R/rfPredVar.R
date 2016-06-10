@@ -2,8 +2,11 @@
 #' @description Generate predictions and prediction variances from a random
 #'   forest based on the infinitesimal jackknife.
 #'
-#'@export
-#'@import randomForest
+#' @export
+#' @import randomForest
+#' @importFrom stats as.formula
+#' @importFrom stats predict
+#' @importFrom stats qnorm
 #'
 #' @param random.forest A random forest trained with \code{keep.inbag=TRUE}. See
 #'   details for more information.
