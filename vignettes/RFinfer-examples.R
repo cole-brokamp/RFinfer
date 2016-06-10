@@ -5,6 +5,9 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(nhanesA))
 
 ## ----eval=FALSE----------------------------------------------------------
+#  install.packages('RFinfer')
+
+## ----eval=FALSE----------------------------------------------------------
 #  install_github('cole-brokamp/RFinfer')
 
 ## ------------------------------------------------------------------------

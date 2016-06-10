@@ -24,7 +24,13 @@ For an detailed introduction to the infinitesimal jackknife and how it is applie
 
 ## Installation
 
-The package is currently not on CRAN, but can be installed from the R prompt:
+Install the package from CRAN:
+
+```{r eval=FALSE}
+install.packages('RFinfer')
+```
+
+Alternatively, install the latest version from GitHub:
 
 ```{r eval=FALSE}
 install_github('cole-brokamp/RFinfer')
