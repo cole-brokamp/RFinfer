@@ -1,6 +1,7 @@
 # RFinfer
-[![Build Status](https://travis-ci.org/cole-brokamp/RFinfer.svg?branch=master)](https://travis-ci.org/cole-brokamp/RFinfer)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RFinfer)](http://cran.r-project.org/package=RFinfer)
 [![DOI](https://zenodo.org/badge/21831/cole-brokamp/RFinfer.svg)](https://zenodo.org/badge/latestdoi/21831/cole-brokamp/RFinfer)
+[![Build Status](https://travis-ci.org/cole-brokamp/RFinfer.svg?branch=master)](https://travis-ci.org/cole-brokamp/RFinfer)
 
 #### About
 
