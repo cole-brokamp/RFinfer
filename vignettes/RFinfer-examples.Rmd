@@ -68,7 +68,7 @@ str(rf.preds)
 
 Plot the predictions with their 95% confidence intervals according to the actual values.
 
-```{r, fig.width=4,fig.height=2}
+```{r, , tidy=FALSE, fig.width=4,fig.height=2}
 library(ggplot2)
 ggplot(rf.preds,aes(d.aq$Ozone,pred)) +
   geom_abline(intercept=0,slope=1,lty=2,color='#999999') +
