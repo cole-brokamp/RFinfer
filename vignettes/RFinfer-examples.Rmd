@@ -93,7 +93,7 @@ Here we will explore a more in depth example using real data from NHANES showing
 
 We will use the `nhanesA` package to retrieve information on BMI and some possibly related demographic characteristics.
 
-```{r}
+```{r, tidy=FALSE}
 library(nhanesA)
 bmx_d <- nhanes('BMX_D')
 demo_d <- nhanes('DEMO_D')
