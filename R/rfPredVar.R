@@ -87,16 +87,13 @@ rfPredVar <- function(random.forest,rf.data,pred.data=rf.data,CI=FALSE,tree.type
   C = N %*% t(pred.centered) - N.avg %*% pred.centered.sums
   raw.IJ <- Matrix::colSums(C^2) / B^2
 
-  N.var <-  mean(Matrix::rowMeans(N^2) - Matrix::rowMeans(N)^2)
-  boot.var <-  rowSums(pred.centered^2) / B
-  bias.correction <-  n * N.var * boot.var / B
-  pred.ij.var <- raw.IJ - bias.correction
+  pred.ij.var <- raw.IJ * (n-1) / n * (n / (n-s))^2
 
   out <- data.frame('pred' = agg.preds,pred.ij.var)
   if (CI) {
     out <- data.frame(out,
-                      'l.ci' = out$pred - (out$pred.ij.var * qnorm(0.975,lower.tail=T)),
-                      'u.ci' = out$pred + (out$pred.ij.var * qnorm(0.975,lower.tail=T)))
+                      'l.ci' = out$pred - (sqrt(out$pred.ij.var) * qnorm(0.975,lower.tail=T)),
+                      'u.ci' = out$pred + (sqrt(out$pred.ij.var) * qnorm(0.975,lower.tail=T)))
   }
   return(out)
 }
