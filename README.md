@@ -17,6 +17,8 @@ Install latest version: `devtools::install_github('cole-brokamp/RFinfer')`
 
 #### Infinitesimal Jackknife
 
+This package is based on simulation experiments in:
 
+Cole Brokamp, MB Rao, Patrick Ryan, Roman Jandarov. A comparison of resampling and recursive partitioning methods in random forest for estimating the asymptotic variance using the infinitesimal jackknife. *Stat*. *In Press*.
 
-This package is based on work completed for my dissertation. For more details, see: http://colebrokamp.com/dissertation
+A preprint is available at [https://arxiv.org/pdf/1706.06150.pdf](https://arxiv.org/pdf/1706.06150.pdf)
