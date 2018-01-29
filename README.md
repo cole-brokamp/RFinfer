@@ -15,10 +15,7 @@ Options for random forest include using a subsample or bootstrap sample for each
 Install from CRAN: `install.packages('RFinfer')`  
 Install latest version: `devtools::install_github('cole-brokamp/RFinfer')`
 
-#### Infinitesimal Jackknife
+#### Publication
 
 This package is based on simulation experiments in:
-
-Cole Brokamp, MB Rao, Patrick Ryan, Roman Jandarov. A comparison of resampling and recursive partitioning methods in random forest for estimating the asymptotic variance using the infinitesimal jackknife. *Stat*. *In Press*.
-
-A preprint is available at [https://arxiv.org/pdf/1706.06150.pdf](https://arxiv.org/pdf/1706.06150.pdf)
+Cole Brokamp, MB Rao, Patrick Ryan, Roman Jandarov. A comparison of resampling and recursive partitioning methods in random forest for estimating the asymptotic variance using the infinitesimal jackknife. *Stat*. 6(1). 360-372. 2017. [*Download*](https://colebrokamp-website.s3.amazonaws.com/publications/Brokamp_Stat_2017.pdf). 
